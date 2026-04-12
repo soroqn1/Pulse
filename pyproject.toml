@@ -1,0 +1,19 @@
+[project]
+name = "pulse"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Yaroslav Sorochan",email = "yaroslavsorocan89@gmail.com"}
+]
+license = "MIT"
+readme = "README.md"
+requires-python = "^3.10"
+dependencies = [
+    "psutil (>=7.2.2,<8.0.0)",
+    "rich (>=15.0.0,<16.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
