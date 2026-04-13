@@ -1,0 +1,37 @@
+Screen, App {
+    background: #0f0f0f;
+}
+
+#logo {
+    color: #E53935;
+    text-align: center;
+    text-style: bold;
+}
+
+#subtitle {
+    text-align: center;
+    color: #DEC8A9;
+    margin-bottom: 2;
+}
+
+#main-menu {
+    width: 40;
+    border: ascii #E53935;
+    background: transparent;
+}
+
+.panel {
+    border: round #E53935;
+    padding: 1;
+    margin: 1 2;
+    height: 100%;
+}
+
+#header-banner {
+    dock: top;
+    height: 3;
+    content-align: center middle;
+    background: #E53935;
+    color: #ffffff;
+    text-style: bold;
+}
