@@ -3,35 +3,53 @@ Screen, App {
 }
 
 #logo {
-    color: #E53935;
     text-align: center;
     text-style: bold;
+    padding-left: 3;
 }
 
 #subtitle {
     text-align: center;
     color: #DEC8A9;
     margin-bottom: 2;
+    padding-left: 3;
+}
+
+#menu-wrapper {
+    height: 6;
+    width: 40;
+    align: center top;
 }
 
 #main-menu {
-    width: 40;
-    border: ascii #E53935;
+    border: round #E53935;
     background: transparent;
+    width: 100%;
+    color: #DEC8A9;
+}
+
+OptionList > .option-list--option-highlighted {
+    background: #E53935;
+    color: #DEC8A9;
+    text-style: bold;
+}
+
+OptionList:focus > .option-list--option-highlighted {
+    background: #E53935;
+    color: #DEC8A9;
+    text-style: bold;
 }
 
 .panel {
     border: round #E53935;
     padding: 1;
-    margin: 1 2;
+    margin: 1 2 0 2;
     height: 100%;
 }
 
-#header-banner {
-    dock: top;
-    height: 3;
-    content-align: center middle;
-    background: #E53935;
-    color: #ffffff;
-    text-style: bold;
+#back-hint {
+    dock: bottom;
+    width: 100%;
+    padding-left: 2;
+    color: #555555;
 }
