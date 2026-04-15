@@ -5,9 +5,18 @@ from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.containers import Center, Container, Horizontal, Middle
 from textual.screen import Screen
-from textual.widgets import Label, OptionList, Static
+from textual.widgets import DataTable, Label, OptionList, Static
 
-from pulse.metrics import get_all_metrics
+from pulse.metrics import get_active_processes, get_all_metrics
+
+COLOR_DANGER = "#E53935"
+
+MENU_OPTIONS = [
+    "1. System",
+    "2. Docker (Lazy mode)",
+    "3. Cleaner",
+    "q. Exit",
+]
 
 
 class AnimatedLogo(Static):
@@ -68,36 +77,34 @@ class MenuScreen(Screen):
                     yield Static("system pulse. always alive.", id="subtitle")
                 with Center():
                     with Container(id="menu-wrapper"):
-                        yield OptionList(
-                            "1. System",
-                            "2. Docker (Lazy mode)",
-                            "3. Cleaner",
-                            "q. Exit",
-                            id="main-menu",
-                        )
+                        yield OptionList(*MENU_OPTIONS, id="main-menu")
+
+    def _is_idle(self) -> bool:
+        return not self.confirming_exit
 
     def action_select_system(self) -> None:
-        if not self.confirming_exit:
-            self.app.push_screen("monitor")
+        if not self._is_idle():
+            return
+        self.app.push_screen("monitor")
 
     def action_select_docker(self) -> None:
-        if not self.confirming_exit:
-            self.app.push_screen("docker")
-            
+        if not self._is_idle():
+            return
+        self.app.push_screen("docker")
+
     def action_select_cleaner(self) -> None:
-        if not self.confirming_exit:
-            self.app.push_screen("cleaner")
+        if not self._is_idle():
+            return
+        self.app.push_screen("cleaner")
 
     def action_exit_app(self) -> None:
-        if not self.confirming_exit:
-            self.confirming_exit = True
-            menu = self.query_one("#main-menu", OptionList)
-            menu.border_title = "[b][#E53935]Terminate?[/#E53935][/b]"
-            menu.clear_options()
-            menu.add_options([
-                "y. Yes, terminate",
-                "n. No, go back"
-            ])
+        if not self._is_idle():
+            return
+        self.confirming_exit = True
+        menu = self.query_one("#main-menu", OptionList)
+        menu.border_title = f"[b][{COLOR_DANGER}]Terminate?[/{COLOR_DANGER}][/b]"
+        menu.clear_options()
+        menu.add_options(["y. Yes, terminate", "n. No, go back"])
 
     def action_confirm_exit(self) -> None:
         if self.confirming_exit:
@@ -109,12 +116,7 @@ class MenuScreen(Screen):
             menu = self.query_one("#main-menu", OptionList)
             menu.border_title = ""
             menu.clear_options()
-            menu.add_options([
-                "1. System",
-                "2. Docker (Lazy mode)",
-                "3. Cleaner",
-                "q. Exit"
-            ])
+            menu.add_options(MENU_OPTIONS)
 
     def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
         if self.confirming_exit:
@@ -143,10 +145,51 @@ class SystemMetrics(Static):
         cpu = data["cpu_usage"]
         mem = data["memory_usage"]
         mem_used = mem["used"] / (1024**3)
+        mem_avail = mem["available"] / (1024**3)
         mem_total = mem["total"] / (1024**3)
 
-        vidget_stat = f"[b]CPU:[/b] {cpu:.1f}%\n[b]RAM:[/b] {mem_used:.1f} / {mem_total:.1f} GB ({mem['percent']}%)"
+        vidget_stat = (
+            f"[b][{COLOR_DANGER}]CPU[/{COLOR_DANGER}][/b] Used: {cpu:.1f}% | Free: {100 - cpu:.1f}%\n"
+            f"[b][{COLOR_DANGER}]RAM[/{COLOR_DANGER}][/b] Used: {mem_used:.1f} GB | Free: {mem_avail:.1f} GB | Total: {mem_total:.1f} GB"
+        )
         self.update(vidget_stat)
+
+
+class ProcessTable(DataTable):
+    def on_mount(self) -> None:
+        self.col_keys = self.add_columns("PID", "Name", "User", "CPU (%)", "Mem (MB)")
+        self.cursor_type = "row"
+        self.zebra_stripes = True
+
+        self.update_processes()
+        self.set_interval(2.0, self.update_processes)
+
+    def update_processes(self) -> None:
+        processes = get_active_processes(limit=50)
+
+        current_rows = {row_key.value: row_key for row_key in self.rows}
+        new_pids = {str(p["pid"]) for p in processes}
+
+        # Remove old rows
+        for pid, row_key in current_rows.items():
+            if pid not in new_pids:
+                self.remove_row(row_key)
+
+        # Add or update rows
+        for p in processes:
+            pid = str(p["pid"])
+            if pid not in current_rows:
+                self.add_row(
+                    pid,
+                    p["name"],
+                    p["user"],
+                    f"{p['cpu']:.1f}",
+                    f"{p['mem_mb']:.1f}",
+                    key=pid,
+                )
+            else:
+                self.update_cell(pid, self.col_keys[3], f"{p['cpu']:.1f}")
+                self.update_cell(pid, self.col_keys[4], f"{p['mem_mb']:.1f}")
 
 
 def create_panel(content: str | Static, title: str) -> Static:
@@ -167,13 +210,18 @@ class BaseDashboardScreen(Screen):
         yield Label("‹ ESC › Back to Menu", id="back-hint")
 
     def compose_panels(self) -> ComposeResult:
-        if False: yield
+        return []
+
+
+class SystemMonitorPanel(Container):
+    def compose(self) -> ComposeResult:
+        yield SystemMetrics()
+        yield ProcessTable()
 
 
 class MonitorScreen(BaseDashboardScreen):
     def compose_panels(self) -> ComposeResult:
-        yield create_panel(SystemMetrics(), "System Resources")
-        yield create_panel("Soon...", "Docker Status")
+        yield create_panel(SystemMonitorPanel(), "System & Activity Monitor")
 
 
 class DockerScreen(BaseDashboardScreen):

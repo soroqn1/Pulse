@@ -45,6 +45,7 @@ OptionList:focus > .option-list--option-highlighted {
     padding: 1;
     margin: 1 2 0 2;
     height: 100%;
+    width: 1fr;
 }
 
 #back-hint {
@@ -52,4 +53,31 @@ OptionList:focus > .option-list--option-highlighted {
     width: 100%;
     padding-left: 2;
     color: #555555;
+}
+
+SystemMetrics {
+    height: 3;
+    padding-left: 1;
+    margin-bottom: 1;
+    color: #DEC8A9;
+}
+
+DataTable {
+    color: #DEC8A9;
+    scrollbar-background: #151515;
+    scrollbar-color: #DEC8A9;
+    scrollbar-color-hover: #ffffff;
+    scrollbar-color-active: #ffffff;
+}
+
+DataTable > .datatable--header {
+    background: #151515;
+    color: #E53935;
+    text-style: bold;
+}
+
+DataTable > .datatable--cursor {
+    background: #E53935;
+    color: #DEC8A9;
+    text-style: bold;
 }
