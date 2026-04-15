@@ -12,7 +12,7 @@ from pulse.metrics import get_active_processes, get_all_metrics
 COLOR_DANGER = "#E53935"
 
 MENU_OPTIONS = [
-    "1. System",
+    "1. Activity Monitor",
     "2. Docker (Lazy mode)",
     "3. Cleaner",
     "q. Exit",
@@ -221,7 +221,7 @@ class SystemMonitorPanel(Container):
 
 class MonitorScreen(BaseDashboardScreen):
     def compose_panels(self) -> ComposeResult:
-        yield create_panel(SystemMonitorPanel(), "System & Activity Monitor")
+        yield create_panel(SystemMonitorPanel(), "Activity Monitor")
 
 
 class DockerScreen(BaseDashboardScreen):
