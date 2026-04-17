@@ -3,6 +3,7 @@ from textual.containers import Horizontal
 from textual.screen import Screen
 from textual.widgets import Label
 
+
 class BaseDashboardScreen(Screen):
     BINDINGS = [
         ("escape", "app.pop_screen", "Back to Menu"),

@@ -14,6 +14,7 @@ MENU_OPTIONS = [
     "q. Exit",
 ]
 
+
 class MenuScreen(Screen):
     BINDINGS = [
         ("1", "select_system", "System"),

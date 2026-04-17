@@ -1,14 +1,13 @@
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical
-from textual.widgets import DataTable, Log, Static, Label
-from textual.coordinate import Coordinate
+from textual.widgets import DataTable, Label, Log
 
 from pulse.services.docker_client import (
-    get_containers,
     get_container_logs,
+    get_containers,
+    restart_container,
     start_container,
     stop_container,
-    restart_container,
 )
 from pulse.ui.components.panels import create_panel
 from pulse.ui.screens.base import BaseDashboardScreen
@@ -39,7 +38,7 @@ class ContainerTable(DataTable):
                     c_id,
                     c.name,
                     c.status,
-                    c.image.tags[0] if c.image.tags else c.attrs['Config']['Image'],
+                    c.image.tags[0] if c.image.tags else c.attrs["Config"]["Image"],
                     key=c_id,
                 )
             else:
@@ -74,7 +73,7 @@ class DockerPanel(Container):
         log_widget = self.query_one(ContainerLog)
         logs = get_container_logs(container_id, tail=50)
         log_widget.clear()
-        
+
         if not logs:
             log_widget.write("[No logs available]")
         else:

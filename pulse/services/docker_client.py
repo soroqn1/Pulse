@@ -1,10 +1,11 @@
+import logging
+import os
+
 import docker
 from docker.errors import DockerException
-import logging
 
 logger = logging.getLogger(__name__)
 
-import os
 
 def get_client():
     try:
@@ -18,9 +19,10 @@ def get_client():
             except DockerException as e2:
                 logger.error(f"Failed to connect to OrbStack Docker daemon: {e2}")
                 return None
-        
+
         logger.error(f"Failed to connect to Docker daemon: {e}")
         return None
+
 
 def get_containers():
     client = get_client()
@@ -32,9 +34,11 @@ def get_containers():
         logger.error(f"Error fetching containers: {e}")
         return []
 
+
 def start_container(container_id: str):
     client = get_client()
-    if not client: return False
+    if not client:
+        return False
     try:
         container = client.containers.get(container_id)
         container.start()
@@ -43,9 +47,11 @@ def start_container(container_id: str):
         logger.error(f"Error starting container {container_id}: {e}")
         return False
 
+
 def stop_container(container_id: str):
     client = get_client()
-    if not client: return False
+    if not client:
+        return False
     try:
         container = client.containers.get(container_id)
         container.stop()
@@ -54,9 +60,11 @@ def stop_container(container_id: str):
         logger.error(f"Error stopping container {container_id}: {e}")
         return False
 
+
 def restart_container(container_id: str):
     client = get_client()
-    if not client: return False
+    if not client:
+        return False
     try:
         container = client.containers.get(container_id)
         container.restart()
@@ -65,12 +73,14 @@ def restart_container(container_id: str):
         logger.error(f"Error restarting container {container_id}: {e}")
         return False
 
+
 def get_container_logs(container_id: str, tail: int = 100):
     client = get_client()
-    if not client: return "Docker daemon not running?"
+    if not client:
+        return "Docker daemon not running?"
     try:
         container = client.containers.get(container_id)
-        logs = container.logs(tail=tail).decode('utf-8')
+        logs = container.logs(tail=tail).decode("utf-8")
         return logs
     except Exception as e:
         logger.error(f"Error fetching logs for container {container_id}: {e}")

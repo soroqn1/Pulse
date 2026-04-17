@@ -8,6 +8,7 @@ from pulse.ui.screens.base import BaseDashboardScreen
 
 COLOR_DANGER = "#E53935"
 
+
 class SystemMetrics(Static):
     def on_mount(self) -> None:
         self.update_metrics()
