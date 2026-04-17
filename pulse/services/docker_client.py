@@ -35,43 +35,34 @@ def get_containers():
         return []
 
 
-def start_container(container_id: str):
+def _execute_action(container_id: str, action: str, **kwargs) -> bool:
     client = get_client()
     if not client:
         return False
     try:
         container = client.containers.get(container_id)
-        container.start()
+        action_method = getattr(container, action)
+        action_method(**kwargs)
         return True
     except Exception as e:
-        logger.error(f"Error starting container {container_id}: {e}")
+        logger.error(f"Error executing '{action}' on container {container_id}: {e}")
         return False
 
 
-def stop_container(container_id: str):
-    client = get_client()
-    if not client:
-        return False
-    try:
-        container = client.containers.get(container_id)
-        container.stop()
-        return True
-    except Exception as e:
-        logger.error(f"Error stopping container {container_id}: {e}")
-        return False
+def start_container(container_id: str) -> bool:
+    return _execute_action(container_id, "start")
 
 
-def restart_container(container_id: str):
-    client = get_client()
-    if not client:
-        return False
-    try:
-        container = client.containers.get(container_id)
-        container.restart()
-        return True
-    except Exception as e:
-        logger.error(f"Error restarting container {container_id}: {e}")
-        return False
+def stop_container(container_id: str) -> bool:
+    return _execute_action(container_id, "stop")
+
+
+def restart_container(container_id: str) -> bool:
+    return _execute_action(container_id, "restart")
+
+
+def remove_container(container_id: str) -> bool:
+    return _execute_action(container_id, "remove", force=True, v=False)
 
 
 def get_container_logs(container_id: str, tail: int = 100):
