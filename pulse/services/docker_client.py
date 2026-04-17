@@ -4,10 +4,21 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+import os
+
 def get_client():
     try:
         return docker.from_env()
     except DockerException as e:
+        home = os.path.expanduser("~")
+        orbstack_sock = f"{home}/.orbstack/run/docker.sock"
+        if os.path.exists(orbstack_sock):
+            try:
+                return docker.DockerClient(base_url=f"unix://{orbstack_sock}")
+            except DockerException as e2:
+                logger.error(f"Failed to connect to OrbStack Docker daemon: {e2}")
+                return None
+        
         logger.error(f"Failed to connect to Docker daemon: {e}")
         return None
 
