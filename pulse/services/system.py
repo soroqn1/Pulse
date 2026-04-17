@@ -4,14 +4,11 @@ import psutil
 
 logger = logging.getLogger(__name__)
 
-
 def safe_get(d, key, default):
     return d.get(key) or default
 
-
 def get_cpu_usage():
     return psutil.cpu_percent(interval=None)
-
 
 def get_memory_usage():
     memory = psutil.virtual_memory()
@@ -22,13 +19,11 @@ def get_memory_usage():
         "available": memory.available,
     }
 
-
 def get_all_metrics():
     return {
         "cpu_usage": get_cpu_usage(),
         "memory_usage": get_memory_usage(),
     }
-
 
 def get_active_processes(limit=50):
     processes = []

@@ -81,3 +81,28 @@ DataTable > .datatable--cursor {
     color: #DEC8A9;
     text-style: bold;
 }
+
+#docker-list-container {
+    width: 60%;
+    border-right: solid #E53935;
+    padding-right: 1;
+}
+
+#docker-logs-container {
+    width: 40%;
+    padding-left: 1;
+}
+
+#container-log {
+    height: 100%;
+    color: #DEC8A9;
+    background: transparent;
+    border: none;
+}
+
+#docker-hints {
+    dock: bottom;
+    color: #DEC8A9;
+    text-align: center;
+    margin-top: 1;
+}
