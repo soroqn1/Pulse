@@ -13,6 +13,9 @@ dependencies = [
     "textual (>=8.2.3,<9.0.0)"
 ]
 
+[project.scripts]
+pulse = "pulse.main:run_app"
+
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

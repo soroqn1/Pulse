@@ -20,6 +20,9 @@ class PulseApp(App):
         self.push_screen("menu")
 
 
-if __name__ == "__main__":
+def run_app():
     app = PulseApp()
     app.run()
+
+if __name__ == "__main__":
+    run_app()
