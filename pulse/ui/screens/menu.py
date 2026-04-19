@@ -28,7 +28,14 @@ class MenuScreen(Screen):
     def compose(self) -> ComposeResult:
         self.confirming_exit = False
         screen_panel = Container(id="full-screen-panel", classes="panel")
-        screen_panel.border_subtitle = "v0.1.0"
+        try:
+            from importlib.metadata import version
+
+            app_version = f"v{version('pulse')}"
+        except Exception:
+            app_version = "v0.0.0"
+
+        screen_panel.border_subtitle = app_version
         with screen_panel:
             with Middle():
                 with Center():
