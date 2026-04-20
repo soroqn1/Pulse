@@ -1,0 +1,31 @@
+version: '3'
+
+tasks:
+  install:
+    desc: "Install poetry dependencies"
+    cmds:
+      - poetry install
+
+  dev:
+    desc: "Run the application locally (development mode)"
+    cmds:
+      - poetry run python -m pulse.main
+
+  clean:
+    desc: "Remove PyInstaller build artifacts"
+    cmds:
+      - rm -rf build/ dist/ *.spec
+
+  build:
+    desc: "Compile Pulse into a standalone binary using PyInstaller"
+    deps: [clean]
+    cmds:
+      - poetry run pyinstaller --name pulse --onefile --copy-metadata pulse --add-data "pulse/styles.tcss:." pulse/main.py
+
+  release:
+    desc: "Build, compress into tar.gz, and generate SHA256 for Homebrew"
+    deps: [build]
+    cmds:
+      - cd dist && tar -czvf pulse-mac.tar.gz pulse
+      - echo "\n=== SHA256 HASH FOR HOMEBREW ==="
+      - shasum -a 256 dist/pulse-mac.tar.gz

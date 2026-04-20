@@ -5,6 +5,8 @@
   <br>
 </div>
 
+> *"If you just want to track CPU spikes, tools like **bpytop** are king. But if you are a backend dev who constantly needs to kill Docker networks, read container logs, and check RAM in one terminal tab - that's exactly why I built Pulse."*
+
 ## ✨ Features
 
 - 🐳 **Smart Docker Dashboard:**
